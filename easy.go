@@ -66,8 +66,8 @@ import (
 	"fmt"
 	"mime"
 	"path"
-	"unsafe"
 	"sync"
+	"unsafe"
 )
 
 type CurlInfo C.CURLINFO
@@ -137,7 +137,7 @@ func (c *contextMap) Delete(k uintptr) {
 	delete(c.items, k)
 }
 
-var context_map = &contextMap {
+var context_map = &contextMap{
 	items: make(map[uintptr]*CURL),
 }
 
@@ -339,9 +339,10 @@ func (curl *CURL) Recv(buffer []byte) (int, error) {
 }
 
 // curl_easy_perform - Perform a file transfer
-func (curl *CURL) Perform() error {
+func (curl *CURL) Perform() (error, interface{}) {
 	p := curl.handle
-	return newCurlError(C.curl_easy_perform(p))
+	errno := C.curl_easy_perform(p)
+	return newCurlError(errno), errno
 }
 
 // curl_easy_pause - pause and unpause a connection
